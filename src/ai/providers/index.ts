@@ -34,11 +34,14 @@ export function createProvider(options: CreateProviderOptions): BaseProvider {
   if (!key) {
     const envKey = getApiKeyFromEnv(type);
     if (!envKey) {
-      throw new Error(
-        `API key not provided and VITE_${type.toUpperCase()}_API_KEY not found in environment`
+      console.warn(
+        `⚠️ API key not provided and VITE_${type.toUpperCase()}_API_KEY not found in environment. Bot AI will be disabled.`
       );
+      // Use empty string to allow bot creation without AI
+      key = '';
+    } else {
+      key = envKey;
     }
-    key = envKey;
   }
 
   const baseConfig: ProviderConfig = {

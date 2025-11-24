@@ -13,15 +13,18 @@ import {
 } from './base';
 
 export class GroqProvider extends BaseProvider {
-  private client: Groq;
+  private client: Groq | null = null;
 
   constructor(config: ProviderConfig) {
     super(config);
     this.validateConfig();
 
-    this.client = new Groq({
-      apiKey: this.config.apiKey,
-    });
+    // Only create client if we have an API key
+    if (this.hasApiKey()) {
+      this.client = new Groq({
+        apiKey: this.config.apiKey,
+      });
+    }
   }
 
   protected getDefaultModel(): string {
@@ -32,6 +35,15 @@ export class GroqProvider extends BaseProvider {
     messages: ChatMessage[],
     options?: Partial<ProviderConfig>
   ): Promise<ChatResponse> {
+    // Return mock response if no API key
+    if (!this.client) {
+      return {
+        content: 'AI is disabled. Please set VITE_GROQ_API_KEY in your .env file.',
+        model: 'mock',
+        usage: undefined,
+      };
+    }
+
     try {
       const response = await this.client.chat.completions.create({
         model: options?.model || this.getModel(),
@@ -64,6 +76,15 @@ export class GroqProvider extends BaseProvider {
   }
 
   async analyze(prompt: string, data: unknown): Promise<AnalysisResult> {
+    // Return mock response if no API key
+    if (!this.client) {
+      return {
+        summary: 'AI is disabled. Please set VITE_GROQ_API_KEY in your .env file.',
+        insights: ['No analysis available without API key'],
+        confidence: 0,
+      };
+    }
+
     const analysisPrompt = `${prompt}\n\nData to analyze:\n${JSON.stringify(data, null, 2)}\n\nProvide a structured analysis with:\n1. A brief summary\n2. Key insights (as bullet points)\n3. Confidence level (0-1)`;
 
     try {

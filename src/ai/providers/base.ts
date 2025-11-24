@@ -83,8 +83,15 @@ export abstract class BaseProvider {
    */
   protected validateConfig(): void {
     if (!this.config.apiKey) {
-      throw new Error(`API key is required for ${this.constructor.name}`);
+      console.warn(`⚠️ No API key provided for ${this.constructor.name}. AI features will be disabled.`);
     }
+  }
+
+  /**
+   * Check if the provider has a valid API key
+   */
+  hasApiKey(): boolean {
+    return !!this.config.apiKey && this.config.apiKey.length > 0;
   }
 
   /**

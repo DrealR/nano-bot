@@ -313,12 +313,12 @@ export const useStore = create<AppStore>((set, get) => ({
   },
 
   initializeHiveMind: () => {
-    const hiveMind = new HiveMind();
+    const hiveMind = HiveMind.getInstance();
     set({ hiveMind });
   },
 
   initializeBotSwarm: () => {
-    const botSwarm = new BotSwarm();
+    const botSwarm = new BotSwarm({});
     set({ botSwarm });
   },
 }));
