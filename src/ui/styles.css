@@ -1,0 +1,424 @@
+:root {
+  /* Theme Colors */
+  --bg-primary: rgba(10, 10, 26, 0.8);
+  --bg-secondary: rgba(15, 15, 35, 0.9);
+  --bg-panel: rgba(20, 20, 40, 0.85);
+  --color-primary: #00FF41;
+  --color-secondary: #00D9FF;
+  --color-accent: #FF006E;
+  --color-text: #EAEAEA;
+  --color-text-dim: #9090A0;
+  --color-warning: #FFB700;
+  --color-danger: #FF3333;
+
+  /* Glow Effects */
+  --glow-primary: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.3);
+  --glow-secondary: 0 0 10px rgba(0, 217, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3);
+  --glow-accent: 0 0 10px rgba(255, 0, 110, 0.5), 0 0 20px rgba(255, 0, 110, 0.3);
+  --glow-strong: 0 0 15px currentColor, 0 0 30px currentColor, 0 0 45px currentColor;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Border */
+  --border-radius: 8px;
+  --border-width: 2px;
+
+  /* Animation */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* Global UI Styles */
+.hud-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  font-family: 'Courier New', monospace;
+  color: var(--color-text);
+  z-index: 1000;
+}
+
+.hud-container * {
+  box-sizing: border-box;
+}
+
+/* Panel Base Style */
+.panel {
+  background: var(--bg-panel);
+  backdrop-filter: blur(10px);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--glow-primary), inset 0 0 20px rgba(0, 255, 65, 0.05);
+  padding: var(--spacing-md);
+  pointer-events: auto;
+  transition: all var(--transition-normal);
+}
+
+.panel:hover {
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.6), 0 0 30px rgba(0, 255, 65, 0.4), inset 0 0 20px rgba(0, 255, 65, 0.1);
+  border-color: var(--color-primary);
+}
+
+.panel-secondary {
+  border-color: var(--color-secondary);
+  box-shadow: var(--glow-secondary), inset 0 0 20px rgba(0, 217, 255, 0.05);
+}
+
+.panel-secondary:hover {
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.6), 0 0 30px rgba(0, 217, 255, 0.4), inset 0 0 20px rgba(0, 217, 255, 0.1);
+}
+
+.panel-accent {
+  border-color: var(--color-accent);
+  box-shadow: var(--glow-accent), inset 0 0 20px rgba(255, 0, 110, 0.05);
+}
+
+/* Button Styles */
+.btn {
+  background: rgba(0, 255, 65, 0.1);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all var(--transition-fast);
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:hover {
+  background: rgba(0, 255, 65, 0.2);
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+  background: rgba(0, 217, 255, 0.1);
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 217, 255, 0.2);
+  box-shadow: var(--glow-secondary);
+}
+
+.btn-accent {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(255, 0, 110, 0.1);
+}
+
+.btn-accent:hover {
+  background: rgba(255, 0, 110, 0.2);
+  box-shadow: var(--glow-accent);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Text Styles */
+.text-primary {
+  color: var(--color-primary);
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+.text-accent {
+  color: var(--color-accent);
+  text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
+}
+
+.text-dim {
+  color: var(--color-text-dim);
+}
+
+/* Stat Display */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-dim);
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primary);
+  text-shadow: var(--glow-primary);
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  box-shadow: 0 0 10px currentColor;
+  transition: width var(--transition-normal);
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  margin: var(--spacing-md) 0;
+  box-shadow: 0 0 5px var(--color-primary);
+}
+
+/* Glow Text */
+.glow-text {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Scanline Effect */
+.scanline {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.5), transparent);
+  animation: scan 3s linear infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Corner Accents */
+.corner-accent {
+  position: relative;
+}
+
+.corner-accent::before,
+.corner-accent::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-primary);
+  z-index: 1;
+}
+
+.corner-accent::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.corner-accent::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Animations */
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
+  50% {
+    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(300px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Utility Classes */
+.fade-in {
+  animation: fade-in var(--transition-normal);
+}
+
+.slide-in-right {
+  animation: slide-in-right var(--transition-normal);
+}
+
+.slide-in-left {
+  animation: slide-in-left var(--transition-normal);
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.rotate {
+  animation: rotate 2s linear infinite;
+}
+
+/* Scrollbar Styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+  box-shadow: var(--glow-primary);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+  box-shadow: var(--glow-secondary);
+}
+
+/* Grid Pattern Background */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-secondary);
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  z-index: 1000;
+}
+
+.tooltip:hover::before {
+  opacity: 1;
+}
