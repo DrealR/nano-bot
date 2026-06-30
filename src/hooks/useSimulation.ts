@@ -9,7 +9,7 @@
 import { useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useStore } from '../store/useStore';
-import type { NanoBotState } from '@core/types';
+import { NanoBotState } from '@core/types';
 
 interface SimulationConfig {
   thinkInterval?: number; // How often bots should think (ms)
@@ -64,13 +64,13 @@ export const useSimulation = (config: SimulationConfig = {}) => {
         bot.update(adjustedDelta);
 
         // Energy regeneration for idle bots
-        if (bot.state === 'idle' && bot.energy < 1000) {
+        if (bot.state === NanoBotState.IDLE && bot.energy < 1000) {
           const energyGain = energyRegenerationRate * adjustedDelta;
           bot.energy = Math.min(1000, bot.energy + energyGain);
         }
 
         // Energy drain for working bots
-        if (bot.state === 'working') {
+        if (bot.state === NanoBotState.WORKING) {
           const energyDrain = 2 * adjustedDelta;
           bot.energy = Math.max(0, bot.energy - energyDrain);
         }
@@ -100,7 +100,7 @@ export const useSimulation = (config: SimulationConfig = {}) => {
         if (
           enableAutoReplication &&
           bot.energy >= autoReplicationThreshold &&
-          bot.state === 'idle' &&
+          bot.state === NanoBotState.IDLE &&
           bot.generation < 5 // Limit generation depth
         ) {
           // Random chance to replicate (10% per check)
@@ -110,13 +110,13 @@ export const useSimulation = (config: SimulationConfig = {}) => {
         }
 
         // Health regeneration when idle
-        if (bot.state === 'idle' && bot.health < 100) {
+        if (bot.state === NanoBotState.IDLE && bot.health < 100) {
           bot.health = Math.min(100, bot.health + 2 * adjustedDelta);
         }
 
         // Low energy behavior
-        if (bot.energy < 100 && bot.state !== 'idle') {
-          bot.state = 'idle'; // Force idle when low on energy
+        if (bot.energy < 100 && bot.state !== NanoBotState.IDLE) {
+          bot.state = NanoBotState.IDLE; // Force idle when low on energy
         }
 
       } catch (error) {

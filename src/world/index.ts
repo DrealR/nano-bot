@@ -4,6 +4,18 @@ export { NanoBotSwarm, type NanoBotSwarmProps, type BotData } from './NanoBotSwa
 export { ReplicationEffect, type ReplicationEffectProps } from './ReplicationEffect';
 export { ParticleSystem, type ParticleSystemProps, type Particle, type ParticleType } from './ParticleSystem';
 
+// Gameplay Components
+export { ResourceNode, type ResourceNodeProps, type ResourceType } from './ResourceNode';
+export { EnemyBot, type EnemyBotProps } from './EnemyBot';
+
+// Combat Effects
+export { DamageNumber, type DamageNumberProps } from './DamageNumber';
+export { Projectile, type ProjectileProps } from './Projectile';
+export { Explosion, type ExplosionProps } from './Explosion';
+
+// NMS-Style Alien World Components
+export { AlienFlora, type AlienFloraProps } from './AlienFlora';
+
 // Voxel World Components
 export { VoxelWorld, type VoxelWorldProps } from './VoxelWorld';
 export { Chunk, type ChunkProps } from './Chunk';

@@ -113,6 +113,61 @@ export const THEMES: Record<string, WorldTheme> = {
     fogDensity: 0.4,
     structureDensity: 0.25,
   },
+  // No Man's Sky inspired themes
+  nms_lush: {
+    name: 'Lush Paradise',
+    primaryColor: [0.3, 0.9, 0.5],   // Vibrant green
+    secondaryColor: [1.0, 0.4, 0.7], // Pink flora
+    accentColor: [0.2, 0.8, 1.0],    // Cyan highlights
+    fogColor: [0.6, 0.75, 0.85],     // Hazy atmosphere
+    fogDensity: 0.3,
+    structureDensity: 0.5,
+  },
+  nms_toxic: {
+    name: 'Toxic World',
+    primaryColor: [0.7, 1.0, 0.0],   // Acid green
+    secondaryColor: [0.9, 0.5, 0.0], // Orange warning
+    accentColor: [0.4, 0.2, 0.6],    // Purple gas
+    fogColor: [0.3, 0.35, 0.15],     // Murky atmosphere
+    fogDensity: 0.7,
+    structureDensity: 0.4,
+  },
+  nms_frozen: {
+    name: 'Frozen Moon',
+    primaryColor: [0.7, 0.9, 1.0],   // Ice blue
+    secondaryColor: [0.9, 0.95, 1.0], // Snow white
+    accentColor: [0.4, 0.6, 0.9],    // Deep blue
+    fogColor: [0.8, 0.85, 0.95],     // Icy fog
+    fogDensity: 0.4,
+    structureDensity: 0.2,
+  },
+  nms_scorched: {
+    name: 'Scorched Planet',
+    primaryColor: [1.0, 0.4, 0.1],   // Molten orange
+    secondaryColor: [1.0, 0.8, 0.2], // Golden yellow
+    accentColor: [0.8, 0.1, 0.1],    // Crimson red
+    fogColor: [0.4, 0.2, 0.1],       // Dusty atmosphere
+    fogDensity: 0.5,
+    structureDensity: 0.3,
+  },
+  nms_exotic: {
+    name: 'Exotic Anomaly',
+    primaryColor: [1.0, 0.2, 0.6],   // Hot pink
+    secondaryColor: [0.3, 1.0, 0.9], // Teal
+    accentColor: [1.0, 0.9, 0.3],    // Gold
+    fogColor: [0.15, 0.1, 0.2],      // Deep purple haze
+    fogDensity: 0.4,
+    structureDensity: 0.6,
+  },
+  nms_crimson: {
+    name: 'Crimson World',
+    primaryColor: [0.9, 0.2, 0.3],   // Blood red
+    secondaryColor: [0.6, 0.1, 0.4], // Maroon
+    accentColor: [1.0, 0.6, 0.2],    // Amber
+    fogColor: [0.25, 0.08, 0.1],     // Red haze
+    fogDensity: 0.5,
+    structureDensity: 0.35,
+  },
 };
 
 export class WorldGenerator {

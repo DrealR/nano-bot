@@ -13,29 +13,17 @@
 export * from './types';
 
 // Export NanoBot class and related types
-export {
-  NanoBot,
-  Skill,
-  BotAction,
-  SerializedNanoBot,
-} from './NanoBot';
+export { NanoBot } from './NanoBot';
+export type { Skill, BotAction, SerializedNanoBot } from './NanoBot';
 
 // Export HiveMind and related types
-export {
-  HiveMind,
-  KnowledgeGraphNode,
-  SharedKnowledgeEntry,
-  CollectiveIntelligence,
-} from './HiveMind';
+export { HiveMind } from './HiveMind';
+export type { KnowledgeGraphNode, SharedKnowledgeEntry, CollectiveIntelligence } from './HiveMind';
 
 // Export BotSwarm and related types
-export {
-  BotSwarm,
-  FormationType,
-} from './BotSwarm';
+export { BotSwarm } from './BotSwarm';
+export type { FormationType } from './BotSwarm';
 
 // Export ExperienceBuffer and related types
-export {
-  ExperienceBuffer,
-  ExperienceBufferConfig,
-} from './ExperienceBuffer';
+export { ExperienceBuffer } from './ExperienceBuffer';
+export type { ExperienceBufferConfig } from './ExperienceBuffer';

@@ -7,7 +7,8 @@
 
 import { create } from 'zustand';
 import { NanoBot, HiveMind, BotSwarm } from '@core';
-import type { Vector3, NanoBotState } from '@core/types';
+import type { Vector3 } from '@core/types';
+import { NanoBotState } from '@core/types';
 import type { WorldTheme } from '@world/WorldGenerator';
 import { THEMES } from '@world/WorldGenerator';
 
@@ -111,9 +112,9 @@ export const useStore = create<AppStore>((set, get) => ({
   totalEnergy: 0,
   activeReplicationEvents: [],
 
-  // Initial State - World Configuration
-  worldTheme: THEMES.cyberpunk,
-  showGrid: true,
+  // Initial State - World Configuration (Default to NMS Exotic theme)
+  worldTheme: THEMES.nms_exotic || THEMES.cyberpunk,
+  showGrid: false, // Hide grid for NMS style
   enableFog: true,
   enableParticles: true,
   showConnections: true,
@@ -217,7 +218,7 @@ export const useStore = create<AppStore>((set, get) => ({
       return;
     }
 
-    if (bot.state === 'replicating') {
+    if (bot.state === NanoBotState.REPLICATING) {
       console.warn(`Bot ${parentId} is already replicating`);
       return;
     }

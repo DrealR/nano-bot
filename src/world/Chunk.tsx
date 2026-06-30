@@ -291,15 +291,19 @@ export const Chunk: React.FC<ChunkProps> = React.memo(({ position, voxelData, vi
       sunDirection: { value: new THREE.Vector3(0.5, 1.0, 0.5).normalize() },
       sunColor: { value: new THREE.Vector3(1.0, 0.95, 0.8) },
       skyColor: { value: new THREE.Vector3(0.5, 0.7, 1.0) },
-      ambientColor: theme
-        ? new THREE.Vector3(...theme.primaryColor).multiplyScalar(0.2)
-        : new THREE.Vector3(0.2, 0.2, 0.3),
+      ambientColor: {
+        value: theme
+          ? new THREE.Vector3(...theme.primaryColor).multiplyScalar(0.2)
+          : new THREE.Vector3(0.2, 0.2, 0.3),
+      },
       fogDensity: { value: 0.5 },
       fogNear: { value: 50 },
       fogFar: { value: 200 },
-      fogColor: theme
-        ? new THREE.Vector3(...theme.fogColor)
-        : new THREE.Vector3(0.1, 0.1, 0.15),
+      fogColor: {
+        value: theme
+          ? new THREE.Vector3(...theme.fogColor)
+          : new THREE.Vector3(0.1, 0.1, 0.15),
+      },
       shadowSoftness: { value: 0.1 },
     };
 

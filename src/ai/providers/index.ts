@@ -129,12 +129,10 @@ export function createGeminiProvider(
 }
 
 // Re-export types and classes for convenience
-export { BaseProvider, ProviderConfig } from './base';
+export { BaseProvider } from './base';
+export type { ProviderConfig, ChatMessage, ChatResponse, AnalysisResult } from './base';
 export { GroqProvider } from './groq';
-export { OpenRouterProvider, OpenRouterConfig } from './openrouter';
-export { GeminiProvider, ImageAnalysisResult } from './gemini';
-export type {
-  ChatMessage,
-  ChatResponse,
-  AnalysisResult,
-} from './base';
+export { OpenRouterProvider } from './openrouter';
+export type { OpenRouterConfig } from './openrouter';
+export { GeminiProvider } from './gemini';
+export type { ImageAnalysisResult } from './gemini';

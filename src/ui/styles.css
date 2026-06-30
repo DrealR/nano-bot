@@ -422,3 +422,76 @@
 .tooltip:hover::before {
   opacity: 1;
 }
+
+/* NMS-Style Discovery Animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100vh);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+/* NMS Color Scheme Overrides */
+.nms-theme {
+  --color-primary: #ff9ecd;
+  --color-secondary: #7fdbff;
+  --color-accent: #ffdc00;
+  --glow-primary: 0 0 10px rgba(255, 158, 205, 0.5), 0 0 20px rgba(255, 158, 205, 0.3);
+  --glow-secondary: 0 0 10px rgba(127, 219, 255, 0.5), 0 0 20px rgba(127, 219, 255, 0.3);
+}
+
+/* NMS Scanner Line Effect */
+@keyframes nms-scan {
+  0% {
+    top: -100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.nms-scanner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(127, 219, 255, 0.3),
+    rgba(127, 219, 255, 0.8),
+    rgba(127, 219, 255, 0.3),
+    transparent
+  );
+  box-shadow: 0 0 20px rgba(127, 219, 255, 0.5);
+  animation: nms-scan 3s ease-in-out infinite;
+}

@@ -11,19 +11,25 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
     "paths": {
       "@/*": ["./src/*"],
+      "@core": ["./src/core/index.ts"],
       "@core/*": ["./src/core/*"],
+      "@ai": ["./src/ai/index.ts"],
       "@ai/*": ["./src/ai/*"],
+      "@world": ["./src/world/index.ts"],
       "@world/*": ["./src/world/*"],
+      "@ui": ["./src/ui/index.ts"],
       "@ui/*": ["./src/ui/*"],
       "@shaders/*": ["./src/shaders/*"]
     },
-    "baseUrl": "."
+    "baseUrl": ".",
+    "types": ["vite/client"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

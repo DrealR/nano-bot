@@ -1,19 +1,21 @@
 /**
- * Environment - Atmospheric effects for the voxel world
- * Skybox, fog, particles, and dynamic lighting
+ * Environment - No Man's Sky inspired atmospheric effects
+ * Alien skybox with planets, procedural terrain, and vibrant atmospherics
  */
 
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Stars, Sparkles } from '@react-three/drei';
+import { Stars, Sparkles, Sky } from '@react-three/drei';
 import * as THREE from 'three';
 import type { WorldTheme } from './WorldGenerator';
+import { AlienFlora } from './AlienFlora';
 
 export interface EnvironmentProps {
   theme: WorldTheme;
   enableFog?: boolean;
   enableParticles?: boolean;
   showGrid?: boolean;
+  nmsStyle?: boolean;
 }
 
 /**
@@ -131,6 +133,274 @@ const Skybox: React.FC<{ theme: WorldTheme }> = ({ theme }) => {
   return (
     <mesh ref={meshRef} material={material}>
       <sphereGeometry args={[500, 32, 32]} />
+    </mesh>
+  );
+};
+
+/**
+ * NMS-Style Planet in the sky
+ */
+const AlienPlanet: React.FC<{ theme: WorldTheme; position?: [number, number, number]; size?: number }> = ({
+  theme,
+  position = [200, 100, -300],
+  size = 80,
+}) => {
+  const planetRef = useRef<THREE.Group>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (planetRef.current) {
+      planetRef.current.rotation.y += 0.0002;
+    }
+    if (ringRef.current) {
+      ringRef.current.rotation.z += 0.0001;
+    }
+  });
+
+  const planetColor = useMemo(() => new THREE.Color(...theme.secondaryColor), [theme]);
+  const atmosphereColor = useMemo(() => new THREE.Color(...theme.primaryColor), [theme]);
+
+  return (
+    <group ref={planetRef} position={position}>
+      {/* Planet surface */}
+      <mesh>
+        <sphereGeometry args={[size, 64, 64]} />
+        <meshStandardMaterial
+          color={planetColor}
+          roughness={0.8}
+          metalness={0.1}
+        />
+      </mesh>
+      {/* Atmosphere glow */}
+      <mesh>
+        <sphereGeometry args={[size * 1.05, 64, 64]} />
+        <meshBasicMaterial
+          color={atmosphereColor}
+          transparent
+          opacity={0.15}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      {/* Outer atmosphere */}
+      <mesh>
+        <sphereGeometry args={[size * 1.15, 32, 32]} />
+        <meshBasicMaterial
+          color={atmosphereColor}
+          transparent
+          opacity={0.05}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      {/* Optional rings */}
+      <mesh ref={ringRef} rotation={[Math.PI / 3, 0, 0]}>
+        <ringGeometry args={[size * 1.4, size * 2, 64]} />
+        <meshBasicMaterial
+          color={theme.accentColor ? new THREE.Color(...theme.accentColor) : planetColor}
+          transparent
+          opacity={0.3}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
+  );
+};
+
+/**
+ * NMS-Style Alien Sky Gradient
+ */
+const NMSSkybox: React.FC<{ theme: WorldTheme }> = ({ theme }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  const material = useMemo(() => {
+    const vertexShader = `
+      varying vec3 vWorldPosition;
+      varying vec3 vPosition;
+
+      void main() {
+        vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
+        vPosition = position;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      uniform float time;
+      uniform vec3 horizonColor;
+      uniform vec3 zenithColor;
+      uniform vec3 sunColor;
+      uniform vec3 sunDirection;
+
+      varying vec3 vWorldPosition;
+      varying vec3 vPosition;
+
+      // Simplex noise for clouds
+      vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+      vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+      vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+      vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+      float snoise(vec3 v) {
+        const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+        const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+
+        vec3 i  = floor(v + dot(v, C.yyy));
+        vec3 x0 = v - i + dot(i, C.xxx);
+
+        vec3 g = step(x0.yzx, x0.xyz);
+        vec3 l = 1.0 - g;
+        vec3 i1 = min(g.xyz, l.zxy);
+        vec3 i2 = max(g.xyz, l.zxy);
+
+        vec3 x1 = x0 - i1 + C.xxx;
+        vec3 x2 = x0 - i2 + C.yyy;
+        vec3 x3 = x0 - D.yyy;
+
+        i = mod289(i);
+        vec4 p = permute(permute(permute(
+                 i.z + vec4(0.0, i1.z, i2.z, 1.0))
+               + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+               + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+
+        float n_ = 0.142857142857;
+        vec3 ns = n_ * D.wyz - D.xzx;
+
+        vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+
+        vec4 x_ = floor(j * ns.z);
+        vec4 y_ = floor(j - 7.0 * x_);
+
+        vec4 x = x_ *ns.x + ns.yyyy;
+        vec4 y = y_ *ns.x + ns.yyyy;
+        vec4 h = 1.0 - abs(x) - abs(y);
+
+        vec4 b0 = vec4(x.xy, y.xy);
+        vec4 b1 = vec4(x.zw, y.zw);
+
+        vec4 s0 = floor(b0)*2.0 + 1.0;
+        vec4 s1 = floor(b1)*2.0 + 1.0;
+        vec4 sh = -step(h, vec4(0.0));
+
+        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+
+        vec3 p0 = vec3(a0.xy, h.x);
+        vec3 p1 = vec3(a0.zw, h.y);
+        vec3 p2 = vec3(a1.xy, h.z);
+        vec3 p3 = vec3(a1.zw, h.w);
+
+        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+        p0 *= norm.x;
+        p1 *= norm.y;
+        p2 *= norm.z;
+        p3 *= norm.w;
+
+        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+        m = m * m;
+        return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+      }
+
+      void main() {
+        vec3 direction = normalize(vWorldPosition);
+
+        // Height-based gradient (horizon to zenith)
+        float height = direction.y * 0.5 + 0.5;
+        height = pow(height, 0.8); // Adjust curve
+
+        // Base sky color
+        vec3 skyColor = mix(horizonColor, zenithColor, height);
+
+        // Sun glow
+        float sunDot = max(0.0, dot(direction, normalize(sunDirection)));
+        float sunGlow = pow(sunDot, 32.0);
+        float sunHalo = pow(sunDot, 4.0) * 0.3;
+        skyColor += sunColor * (sunGlow + sunHalo);
+
+        // Volumetric clouds
+        vec3 cloudPos = direction * 2.0 + vec3(time * 0.01, 0.0, time * 0.005);
+        float clouds = snoise(cloudPos * 2.0) * 0.5 + 0.5;
+        clouds += snoise(cloudPos * 4.0) * 0.25;
+        clouds = smoothstep(0.4, 0.8, clouds);
+
+        // Only show clouds near horizon
+        float cloudMask = 1.0 - smoothstep(0.1, 0.6, height);
+        clouds *= cloudMask * 0.4;
+
+        skyColor = mix(skyColor, vec3(1.0), clouds);
+
+        // Subtle color banding (NMS style)
+        float bands = sin(height * 20.0 + time * 0.1) * 0.02;
+        skyColor += bands;
+
+        gl_FragColor = vec4(skyColor, 1.0);
+      }
+    `;
+
+    // Determine if this is an NMS theme
+    const isNMS = theme.name?.includes('Lush') || theme.name?.includes('Toxic') ||
+                  theme.name?.includes('Frozen') || theme.name?.includes('Scorched') ||
+                  theme.name?.includes('Exotic') || theme.name?.includes('Crimson');
+
+    const horizonColor = isNMS
+      ? new THREE.Color(...theme.fogColor)
+      : new THREE.Color(...theme.fogColor).multiplyScalar(2);
+
+    const zenithColor = isNMS
+      ? new THREE.Color(
+          theme.primaryColor[0] * 0.3,
+          theme.primaryColor[1] * 0.3,
+          theme.primaryColor[2] * 0.5
+        )
+      : new THREE.Color(...theme.primaryColor).multiplyScalar(0.3);
+
+    return new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        time: { value: 0 },
+        horizonColor: { value: horizonColor },
+        zenithColor: { value: zenithColor },
+        sunColor: { value: new THREE.Color(...theme.accentColor) },
+        sunDirection: { value: new THREE.Vector3(0.5, 0.3, -0.8).normalize() },
+      },
+      side: THREE.BackSide,
+      depthWrite: false,
+    });
+  }, [theme]);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      material.uniforms.time.value = state.clock.elapsedTime;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} material={material}>
+      <sphereGeometry args={[500, 64, 64]} />
+    </mesh>
+  );
+};
+
+/**
+ * Alien Ground/Terrain
+ */
+const AlienGround: React.FC<{ theme: WorldTheme }> = ({ theme }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  const material = useMemo(() => {
+    const groundColor = new THREE.Color(...theme.fogColor).multiplyScalar(0.5);
+    const accentColor = new THREE.Color(...theme.primaryColor);
+
+    return new THREE.MeshStandardMaterial({
+      color: groundColor,
+      roughness: 0.9,
+      metalness: 0.1,
+    });
+  }, [theme]);
+
+  return (
+    <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
+      <circleGeometry args={[200, 64]} />
+      <primitive object={material} attach="material" />
     </mesh>
   );
 };
@@ -367,55 +637,96 @@ export const Environment: React.FC<EnvironmentProps> = ({
   enableFog = true,
   enableParticles = true,
   showGrid = true,
+  nmsStyle = true, // Default to NMS style now
 }) => {
+  // Determine if this is an NMS theme
+  const isNMSTheme = theme.name?.includes('Lush') || theme.name?.includes('Toxic') ||
+                     theme.name?.includes('Frozen') || theme.name?.includes('Scorched') ||
+                     theme.name?.includes('Exotic') || theme.name?.includes('Crimson') ||
+                     theme.name?.includes('Paradise') || theme.name?.includes('Moon') ||
+                     theme.name?.includes('Planet') || theme.name?.includes('Anomaly') ||
+                     nmsStyle;
+
   return (
     <group name="environment">
-      {/* Skybox with animated nebula */}
-      <Skybox theme={theme} />
+      {/* NMS-style skybox or original */}
+      {isNMSTheme ? <NMSSkybox theme={theme} /> : <Skybox theme={theme} />}
 
-      {/* Stars in the distance */}
+      {/* Planet in the sky for NMS themes */}
+      {isNMSTheme && (
+        <>
+          <AlienPlanet theme={theme} position={[250, 120, -350]} size={100} />
+          <AlienPlanet
+            theme={{
+              ...theme,
+              primaryColor: [theme.accentColor[0], theme.accentColor[1], theme.accentColor[2]],
+              secondaryColor: theme.primaryColor,
+            }}
+            position={[-180, 80, -280]}
+            size={40}
+          />
+        </>
+      )}
+
+      {/* Stars in the distance - more visible for NMS */}
       <Stars
         radius={300}
         depth={50}
-        count={5000}
-        factor={4}
-        saturation={0.5}
+        count={isNMSTheme ? 3000 : 5000}
+        factor={isNMSTheme ? 6 : 4}
+        saturation={isNMSTheme ? 0.8 : 0.5}
         fade
-        speed={0.5}
+        speed={0.3}
       />
 
       {/* Sparkles for extra magic */}
       <Sparkles
-        count={100}
-        size={2}
+        count={isNMSTheme ? 150 : 100}
+        size={isNMSTheme ? 3 : 2}
         speed={0.3}
-        opacity={0.4}
+        opacity={0.5}
         color={new THREE.Color(...theme.primaryColor)}
         scale={[200, 100, 200]}
       />
 
       <Sparkles
-        count={80}
-        size={1.5}
+        count={isNMSTheme ? 120 : 80}
+        size={isNMSTheme ? 2.5 : 1.5}
         speed={0.4}
-        opacity={0.3}
+        opacity={0.4}
         color={new THREE.Color(...theme.secondaryColor)}
         scale={[180, 90, 180]}
       />
 
-      {/* Grid floor */}
-      {showGrid && <GridFloor theme={theme} />}
+      {/* Alien Flora for NMS themes */}
+      {isNMSTheme && <AlienFlora theme={theme} count={100} radius={60} />}
+
+      {/* Alien Ground for NMS themes */}
+      {isNMSTheme && <AlienGround theme={theme} />}
+
+      {/* Grid floor - hidden for NMS themes */}
+      {showGrid && !isNMSTheme && <GridFloor theme={theme} />}
 
       {/* Ambient particles */}
       {enableParticles && <AmbientParticles theme={theme} />}
 
-      {/* Volumetric fog */}
+      {/* Volumetric fog - adjusted for NMS */}
       {enableFog && <VolumetricFog theme={theme} />}
+
+      {/* Sun light for NMS themes */}
+      {isNMSTheme && (
+        <directionalLight
+          position={[100, 60, -150]}
+          intensity={1.5}
+          color={new THREE.Color(...theme.accentColor)}
+          castShadow
+        />
+      )}
 
       {/* Ambient energy glow at origin */}
       <pointLight
-        position={[0, 0, 0]}
-        intensity={2}
+        position={[0, 5, 0]}
+        intensity={isNMSTheme ? 1 : 2}
         distance={50}
         color={new THREE.Color(...theme.primaryColor)}
         decay={2}
@@ -432,6 +743,18 @@ export const Environment: React.FC<EnvironmentProps> = ({
         color={theme.accentColor}
         speed={2.0}
       />
+
+      {/* Additional ambient for NMS */}
+      {isNMSTheme && (
+        <>
+          <hemisphereLight
+            color={new THREE.Color(...theme.primaryColor)}
+            groundColor={new THREE.Color(...theme.fogColor)}
+            intensity={0.5}
+          />
+          <ambientLight intensity={0.3} color={new THREE.Color(...theme.fogColor)} />
+        </>
+      )}
     </group>
   );
 };

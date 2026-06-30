@@ -44,6 +44,11 @@ export type AIProviderType = 'groq' | 'openrouter' | 'gemini';
 export type ColorTheme = 'default' | 'neon' | 'pastel' | 'monochrome' | 'rainbow' | 'cyberpunk';
 
 /**
+ * Bot personality types that affect behavior
+ */
+export type BotPersonality = 'aggressive' | 'defensive' | 'explorer' | 'builder' | 'social';
+
+/**
  * Theme color configuration for bot visualization
  */
 export interface ThemeColors {
@@ -99,6 +104,8 @@ export interface NanoBotConfig {
   theme: ColorTheme;
   /** Custom name for the bot */
   name?: string;
+  /** Bot personality type affecting behavior */
+  personality?: BotPersonality;
   /** Tags or labels for categorization */
   tags?: string[];
   /** Timestamp when the bot was created */

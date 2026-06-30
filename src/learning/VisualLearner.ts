@@ -8,7 +8,14 @@
 
 import { GeminiProvider, ImageAnalysisResult } from '../ai/providers/gemini';
 import { VisualLearningData } from '../core/types';
-import { randomUUID } from 'crypto';
+// Browser-compatible UUID generator
+const randomUUID = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
 
 export interface VisualLearnerConfig {
   /** API key for Gemini provider */
@@ -57,7 +64,7 @@ export interface Pattern {
 export class VisualLearner {
   private provider: GeminiProvider;
   private config: Required<VisualLearnerConfig>;
-  private captureIntervalId: NodeJS.Timeout | null = null;
+  private captureIntervalId: ReturnType<typeof setInterval> | null = null;
   private lastCaptureTime: number = 0;
   private captureHistory: VisualLearningData[] = [];
   private maxHistorySize: number = 100;

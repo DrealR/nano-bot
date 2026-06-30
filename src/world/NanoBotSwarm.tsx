@@ -319,7 +319,7 @@ export const NanoBotSwarm: React.FC<NanoBotSwarmProps> = ({
       {showConnections && (
         <group ref={connectionsRef}>
           {connectionElements.map(({ geometry, material, key }) => (
-            <line key={key} geometry={geometry} material={material} />
+            <primitive key={key} object={new THREE.Line(geometry, material)} />
           ))}
         </group>
       )}

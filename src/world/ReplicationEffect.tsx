@@ -138,6 +138,12 @@ export const ReplicationEffect: React.FC<ReplicationEffectProps> = ({
     [colorObj]
   );
 
+  // Create the connection line object
+  const connectionLine = useMemo(() => {
+    const line = new THREE.Line(connectionGeometry, connectionMaterial);
+    return line;
+  }, [connectionGeometry, connectionMaterial]);
+
   // Energy beam particles flowing from parent to child
   const beamParticlesGeometry = useMemo(() => {
     const particleCount = 50;
@@ -332,11 +338,7 @@ export const ReplicationEffect: React.FC<ReplicationEffectProps> = ({
       />
 
       {/* Connection line */}
-      <line
-        ref={connectionLineRef}
-        geometry={connectionGeometry}
-        material={connectionMaterial}
-      />
+      <primitive ref={connectionLineRef} object={connectionLine} />
 
       {/* Crystallization mesh */}
       <mesh

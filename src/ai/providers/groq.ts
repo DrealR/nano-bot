@@ -45,9 +45,14 @@ export class GroqProvider extends BaseProvider {
     }
 
     try {
+      const groqMessages = messages.map(msg => ({
+        role: msg.role as 'system' | 'user' | 'assistant',
+        content: msg.content,
+      }));
+
       const response = await this.client.chat.completions.create({
         model: options?.model || this.getModel(),
-        messages: messages as Groq.Chat.ChatCompletionMessageParam[],
+        messages: groqMessages,
         temperature: options?.temperature ?? this.config.temperature,
         max_tokens: options?.maxTokens ?? this.config.maxTokens,
       });
@@ -59,12 +64,12 @@ export class GroqProvider extends BaseProvider {
 
       return {
         content: choice.message.content,
-        model: response.model,
+        model: response.model || this.getModel(),
         usage: response.usage
           ? {
-              promptTokens: response.usage.prompt_tokens,
-              completionTokens: response.usage.completion_tokens,
-              totalTokens: response.usage.total_tokens,
+              promptTokens: response.usage.prompt_tokens || 0,
+              completionTokens: response.usage.completion_tokens || 0,
+              totalTokens: response.usage.total_tokens || 0,
             }
           : undefined,
       };
